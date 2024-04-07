@@ -1,0 +1,220 @@
+/* style.css */
+
+/* Reset de márgenes y rellenos */
+body {
+    background-color: #212121; 
+    color: #ffedd3; 
+    font-family: 'League Spartan', sans-serif;
+  }
+  
+  h2 {
+    color: #ffedd3;
+  }
+  
+  .button-container h2 {
+    color: #ffc506; /* Nuevo color para el h2 dentro de .button-container */
+  }
+  
+  /* Ajustes de margen para el contenido principal */
+  .main-content {
+    margin-top: 10px;
+    display: flex;
+    gap: 16px;
+  }
+  
+  #editor-container {
+      padding-top: 20px;
+      width: 50%; /* Define el ancho del contenedor al 50% de la página */
+      height:100vh; /* Utiliza el 100% de la altura visible del viewport */
+      float: left; /* Hace que el contenedor flote a la izquierda */
+      
+  }
+  #editor-container2{
+      padding-top: 20px;
+      width: 50%; /* Define el ancho del contenedor al 50% de la página */
+      height:100vh; /* Utiliza el 100% de la altura visible del viewport */
+      float: right; /* Hace que el contenedor flote a la izquierda */
+      
+  }
+  .CodeMirror {
+      height: 100%; /* Ocupa el 100% de la altura del contenedor */
+      border: 1px solid rgb(211, 211, 36);
+  }
+  
+  .button-container {
+    margin-bottom: 20px;
+  }
+  
+  /* Estilos para el grupo de botones */
+  .button-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Estilos para el título de botones */
+  .button-title {
+    margin-right: 20px;
+    color: #ffffff; /* Texto blanco */
+  }
+  
+  .btn {
+    font-size: 17px;
+    background: transparent;
+    border: none;
+    padding: 1em 1.5em;
+    color: #ffedd3;
+    text-transform: uppercase;
+    position: relative;
+    transition: 0.5s ease;
+    cursor: pointer;
+  }
+  
+  .btn::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background-color: #ffc506;
+    transition: 0.5s ease;
+  }
+  
+  .btn:hover {
+    color: #1e1e2b;
+    transition-delay: 0.5s;
+  }
+  
+  .btn:hover::before {
+    width: 100%;
+  }
+  
+  .btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0;
+    width: 100%;
+    background-color: #ffc506;
+    transition: 0.4s ease;
+    z-index: -1;
+  }
+  
+  .btn:hover::after {
+    height: 100%;
+    transition-delay: 0.4s;
+    color: aliceblue;
+  }
+  
+  
+  .Btn {
+    width: 70px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+    position: relative;
+    /* overflow: hidden; */
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all .3s;
+  }
+  
+  .svgContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    backdrop-filter: blur(0px);
+    letter-spacing: 0.8px;
+    border-radius: 10px;
+    transition: all .3s;
+    border: 1px solid rgba(156, 156, 156, 0.466);
+  }
+  
+  .BG {
+    position: absolute;
+    content: "";
+    width: 85%;
+    height: 100%;
+    background: #181818;
+    z-index: -1;
+    border-radius: 10px;
+    pointer-events: none;
+    transition: all .3s;
+  }
+  
+  .Btn:hover .BG {
+    transform: rotate(35deg);
+    transform-origin: bottom;
+  }
+  
+  .Btn:hover .svgContainer {
+    background-color: rgba(156, 156, 156, 0.466);
+    backdrop-filter: blur(4px);
+  }
+  
+  /* switch settings 👇 */
+  .theme {
+    --bg-color: #111;
+    --main-color: #ffedd3;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--bg-color);
+    border-radius: 100%;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+  }
+  
+  .input {
+    cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    opacity: 0;
+  }
+  
+  .icon {
+    position: absolute;
+    top: calc(50% -13px);
+    left: calc(50% -13px);
+    width: 26px;
+    height: 26px;
+  }
+  
+  .icon.icon-moon {
+    fill: var(--main-color);
+  }
+  
+  .icon.icon-sun {
+    stroke: var(--main-color);
+    display: none;
+  }
+  
+  .input:checked ~ .icon.icon-sun {
+    display: block;
+  }
+  
+  .input:checked ~ .icon.icon-moon {
+    display: none;
+  }
+  
+  .theme:active {
+    box-shadow: 0px 0px var(--main-color);
+    transform: translate(3px, 3px);
+  }
+  
+  .CodeMirror {
+      height: 100%; /* Ocupa el 100% de la altura del contenedor */
+      border: 1px solid rgb(211, 211, 36);
+  }
