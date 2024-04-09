@@ -24,13 +24,14 @@ app.post( "/compilar",(req,res) =>{
         let resultadoString = '';
         //console.log('Resultado:', resultado);
         var salida = analyzeList(resultado.instrucciones);
+        // Esto es lo que debe de imprimir
         console.log('Salida: ', salida);
         resultado.instrucciones.forEach(function (elemento) {
             resultadoString += elemento + '\n'; // Agregar cada elemento al resultado con un salto de línea
         });
 
         // Enviar el resultado al cliente como respuesta
-        res.status(200).send(resultadoString);
+        res.status(200).send(salida);
     } catch (error) {
         console.error(error);
         // Enviar un mensaje de error al cliente si ocurre un error durante el análisis
