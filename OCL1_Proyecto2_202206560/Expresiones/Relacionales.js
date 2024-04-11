@@ -1,4 +1,5 @@
 const expression = require('./OperationType.js');
+const newValue = require('./valores.js')
 
 function Relacional(operation_object){
     console.log("Operación recibida:", operation_object);
@@ -7,17 +8,17 @@ function Relacional(operation_object){
     console.log("n1:", n1, "n2:", n2);
     switch(operation_object.type){
         case 'mayor':
-            return n1 > n2;
+            return new newValue(n1 > n2, 'Boolean', operation_object.line, operation_object.column);
         case 'menor':
-            return n1 < n2;
+            return new newValue(n1 < n2, 'Boolean', operation_object.line, operation_object.column);
         case 'mayorigual':
-            return n1 >= n2;
+            return new newValue(n1 >= n2, 'Boolean', operation_object.line, operation_object.column);
         case 'menorigual':
-            return n1 <= n2;
+            return new newValue(n1 <= n2, 'Boolean', operation_object.line, operation_object.column);
         case 'igual':
-            return n1 === n2;
+            return new newValue(n1 === n2, 'Boolean', operation_object.line, operation_object.column);
         case 'noigual':
-            return n1 !== n2;
+            return new newValue(n1 !== n2, 'Boolean', operation_object.line, operation_object.column);
     }
 }
 

@@ -26,6 +26,7 @@ app.post( "/compilar",(req,res) =>{
         var salida = analyzeList(resultado.instrucciones);
         // Esto es lo que debe de imprimir
         console.log('Salida: ', salida);
+        console.log(salida.instrucciones);
         resultado.instrucciones.forEach(function (elemento) {
             resultadoString += elemento + '\n'; // Agregar cada elemento al resultado con un salto de línea
         });

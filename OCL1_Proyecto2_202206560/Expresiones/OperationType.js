@@ -3,16 +3,16 @@ function expression(expresion_type){
         return parseInt(expresion_type.value);
     
     }
-    else if (expresion_type.type === 'Double'){
+    else if (expresion_type.type === 'double'){
         return parseFloat(expresion_type.value);
     }
-    else if (expresion_type.type === 'Cadena'){
+    else if (expresion_type.type === 'cadena'){
         return expresion_type.value;
     }
-    else if (expresion_type.type === 'Boolean'){
+    else if (expresion_type.type === 'boolean'){
         return expresion_type.value;
     }
-    else if (expresion_type.type === 'Char'){
+    else if (expresion_type.type === 'char'){
         return expresion_type.value;
     }
     else if (expresion_type.type === 'negativo'){
@@ -30,6 +30,14 @@ function expression(expresion_type){
     if (expresion_type.type === 'and' || expresion_type.type === 'or' || expresion_type.type === 'not'){
         const Logica = require('./Logicas');
         return Logica(expresion_type);
+    }
+    if (expresion_type.type === 'ternario'){
+        const Ternario = require('./ternarioV');
+        return Ternario(expresion_type);
+    }
+    if (expresion_type.type === 'sen_if'){
+        const sentenceIf = require('./sentenceIf');
+        return sentenceIf(expresion_type);
     }
 }
 
