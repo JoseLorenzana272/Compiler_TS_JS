@@ -83,24 +83,24 @@
       <script>
         const buttonRun = document.getElementById("ejecutarButton");
       
-      buttonRun.addEventListener("click", () => {
-      const textoEditor = editor.getValue(); // Obtiene el texto del editor
-      const consolaTexto = editor2.getValue(); // Obtiene el texto de la consola
-      
-      fetch("/compilar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ textoEditor: textoEditor, consolaTexto: consolaTexto })
-      })
-      .then(response => response.text())
-            .then(data => {
-              console.log(data); // Muestra el resultado en la consola
-                editor2.setValue(data); // Establece el resultado en la consola
-            })
-            .catch(error => console.error(error));
-      });
+        buttonRun.addEventListener("click", () => {
+    const textoEditor = editor.getValue(); // Obtiene el texto del editor
+
+    fetch("/interpretar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ contenido: textoEditor })
+    })
+    .then(response => response.text()) // Recibe la respuesta como texto
+    .then(data => {
+        console.log(data); // Muestra el resultado en la consola
+        editor2.setValue(data); // Establece el resultado en el editor de consola
+    })
+    .catch(error => console.error(error));
+});
+
       </script>
 <script src="script.js"></script>
 

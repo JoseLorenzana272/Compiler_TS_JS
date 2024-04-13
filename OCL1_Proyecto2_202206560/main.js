@@ -3,6 +3,8 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const path = require('path');
+const tablasimbolos = require('./Expresiones/SymbolTable.js');
+global.tabla = new tablasimbolos();
 let cors = require('cors');
 
 app.use(cors());
