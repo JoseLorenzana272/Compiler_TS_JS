@@ -14,6 +14,9 @@
         const {Round} = require("../js/Expresion/Round");
         const {ToUpper} = require("../js/Expresion/ToUpper");
         const {ToString} = require("../js/Expresion/toString");
+        const {VarDecla} = require("../js/instruccion/VarDecla");
+        const {idValue} = require("../js/Expresion/idValue");
+        const {Incremento} = require("../js/instruccion/Incremento");
 %}
 
 %lex // Inicia parte léxica
@@ -79,6 +82,9 @@
 "toupper"               return 'TOUPPER';
 "round"                 return 'ROUND';
 "std::toString"         return 'TOSTRING';
+// Incremento
+"++"                    return 'DMAS';
+"--"                    return 'DMENOS';
 // Cadenas             "asdfasdfasf"
 \"[^\"]*\"				{ yytext = yytext.substr(1,yyleng-2); return 'CADENA'; }
 ([a-zA-z])[a-zA-Z0-9_]* return 'ID';
@@ -119,48 +125,71 @@ instrucciones: instrucciones instruccion    {  $1.push($2); $$ = $1;}
 instruccion: EXEC expresion PYC         { $$ =  $2;}
             | fn_print PYC               { $$ = $1;}
             | fn_if                     { $$ = $1;}
+            | dec_var PYC                { $$ = $1;}
+            | set_var PYC                { $$ = $1;}
+            | incremento PYC             { $$ = $1;}
 ;
+
+dec_var: tipo lista_id var_assig {$$ = new VarDecla($2,$1,$3, @1.first_line,@1.first_column);}
+;
+
+lista_id: lista_id COMA ID { $1.push($3); $$ = $1;}
+        | ID { $$ = [$1];}
+;
+
+var_assig : ASIGNACION expresion { $$ = $2;}
+        | { $$ = null;}
+;
+
+set_var: ID ASIGNACION expresion { $$ = new SetVar($1,$3,@1.first_line,@1.first_column);}
+;
+
 // Para sitetisar un dato, se utiliza $$
-expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica(new Primitivo(0,0,0),$2,OpAritmetica.RESTA,0,0);} 
-        | expresion MAS expresion      { $$ = new Aritmetica($1,$3,OpAritmetica.SUMA,0,0);}
-        | expresion RES expresion       { $$ = new Aritmetica($1,$3,OpAritmetica.RESTA,0,0);}
-        | expresion MUL expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.PRODUCTO,0,0);}
-        | expresion DIV expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.DIVISION,0,0);}
-        | expresion MOD expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.MODULO,0,0);}
-        | POW PARIZQ expresion COMA expresion PARDER { $$ =  new Aritmetica($3,$5,OpAritmetica.POTENCIA,0,0);}
-        | expresion TERNARIO expresion DOSPUNTOS expresion { $$ = new Ternario($1,$3,$5,0,0);}
+expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica(new Primitivo(@1.first_line,@1.first_column,0),$2,OpAritmetica.RESTA,@1.first_line,@1.first_column);} 
+        | expresion MAS expresion      { $$ = new Aritmetica($1,$3,OpAritmetica.SUMA,@1.first_line,@1.first_column);}
+        | expresion RES expresion       { $$ = new Aritmetica($1,$3,OpAritmetica.RESTA,@1.first_line,@1.first_column);}
+        | expresion MUL expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.PRODUCTO,@1.first_line,@1.first_column);}
+        | expresion DIV expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.DIVISION,@1.first_line,@1.first_column);}
+        | expresion MOD expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.MODULO,@1.first_line,@1.first_column);}
+        | POW PARIZQ expresion COMA expresion PARDER { $$ =  new Aritmetica($3,$5,OpAritmetica.POTENCIA,@1.first_line,@1.first_column);}
+        | expresion TERNARIO expresion DOSPUNTOS expresion { $$ = new Ternario($1,$3,$5,@1.first_line,@1.first_column);}
         | relacionales                   { $$ = $1;}
         | logicos                   { $$ = $1;}
-        | NUMBER                        { $$ = new Primitivo($1,TipoDato.NUMBER,0,0); }
-        | DOUBLE                        { $$ =  new Primitivo($1,TipoDato.DOUBLE,0,0); }
-        | TRUE                        { $$ =  new Primitivo($1,TipoDato.BOOLEANO,0,0); }
-        | FALSE                        { $$ =  new Primitivo($1,TipoDato.BOOLEANO,0,0); }
-        | CADENA                        { $$ =  new Primitivo($1,TipoDato.STRING,0,0); }
+        | NUMBER                        { $$ = new Primitivo($1,TipoDato.NUMBER,@1.first_line,@1.first_column); }
+        | DOUBLE                        { $$ =  new Primitivo($1,TipoDato.DOUBLE,@1.first_line,@1.first_column); }
+        | TRUE                        { $$ =  new Primitivo($1,TipoDato.BOOLEANO,@1.first_line,@1.first_column); }
+        | FALSE                        { $$ =  new Primitivo($1,TipoDato.BOOLEANO,@1.first_line,@1.first_column); }
+        | CADENA                        { $$ =  new Primitivo($1,TipoDato.STRING,@1.first_line,@1.first_column); }
         | PARIZQ expresion PARDER        { $$ = $2;}
-        | TOLOWER PARIZQ expresion PARDER { $$ = new ToLower($3,0,0); }
-        | TOUPPER PARIZQ expresion PARDER { $$ = new ToUpper($3,0,0); }
-        | ROUND PARIZQ expresion PARDER { $$ = new Round($3,0,0); }
-        | TOSTRING PARIZQ expresion PARDER { $$ = new ToString($3,0,0); }
+        | TOLOWER PARIZQ expresion PARDER { $$ = new ToLower($3,@1.first_line,@1.first_column); }
+        | TOUPPER PARIZQ expresion PARDER { $$ = new ToUpper($3,@1.first_line,@1.first_column); }
+        | ROUND PARIZQ expresion PARDER { $$ = new Round($3,@1.first_line,@1.first_column); }
+        | TOSTRING PARIZQ expresion PARDER { $$ = new ToString($3,@1.first_line,@1.first_column); }
+        | ID                            { $$ = new idValue($1, @1.first_line,@1.first_column); }
         
 ;
 
 relacionales
-        : expresion IGUAL expresion       { $$ =  new Relacional($1,$3,OpRelacional.IGUAL,0,0);}
-        | expresion DISTINTO expresion    { $$ =  new Relacional($1,$3,OpRelacional.DISTINTO,0,0);}
-        | expresion MENOR expresion       { $$ =  new Relacional($1,$3,OpRelacional.MENOR,0,0);}
-        | expresion MENORIGUAL expresion  { $$ =  new Relacional($1,$3,OpRelacional.MENORIGUAL,0,0);}
-        | expresion MAYOR expresion       { $$ =  new Relacional($1,$3,OpRelacional.MAYOR,0,0);}
-        | expresion MAYORIGUAL expresion  { $$ =  new Relacional($1,$3,OpRelacional.MAYORIGUAL,0,0);}
+        : expresion IGUAL expresion       { $$ =  new Relacional($1,$3,OpRelacional.IGUAL,@1.first_line,@1.first_column);}
+        | expresion DISTINTO expresion    { $$ =  new Relacional($1,$3,OpRelacional.DISTINTO,@1.first_line,@1.first_column);}
+        | expresion MENOR expresion       { $$ =  new Relacional($1,$3,OpRelacional.MENOR,@1.first_line,@1.first_column);}
+        | expresion MENORIGUAL expresion  { $$ =  new Relacional($1,$3,OpRelacional.MENORIGUAL,@1.first_line,@1.first_column);}
+        | expresion MAYOR expresion       { $$ =  new Relacional($1,$3,OpRelacional.MAYOR,@1.first_line,@1.first_column);}
+        | expresion MAYORIGUAL expresion  { $$ =  new Relacional($1,$3,OpRelacional.MAYORIGUAL,@1.first_line,@1.first_column);}
 ;
 
 logicos
-        : expresion AND expresion       { $$ =  new Logico($1,$3,OpLogico.AND,0,0);}
-        | expresion OR  expresion       { $$ =  new Logico($1,$3,OpLogico.OR,0,0);}
-        | NOT expresion                 { $$ =  new Logico(null,$2,OpLogico.NOT,0,0);}
+        : expresion AND expresion       { $$ =  new Logico($1,$3,OpLogico.AND,@1.first_line,@1.first_column);}
+        | expresion OR  expresion       { $$ =  new Logico($1,$3,OpLogico.OR,@1.first_line,@1.first_column);}
+        | NOT expresion                 { $$ =  new Logico(null,$2,OpLogico.NOT,@1.first_line,@1.first_column);}
 ;
 
-fn_print: COUT CONCATENAR expresion { $$ = new Print($3,false,0,0)}
-        | COUT CONCATENAR expresion CONCATENAR ENDL { $$ = new Print($3,true,0,0)}
+incremento: ID MAS MAS {$$ = new Incremento($1,true,@1.first_line,@1.first_column);}
+        | ID RES RES {$$ = new Incremento($1,false,@1.first_line,@1.first_column);}
+;
+
+fn_print: COUT CONCATENAR expresion { $$ = new Print($3,false,@1.first_line,@1.first_column)}
+        | COUT CONCATENAR expresion CONCATENAR ENDL { $$ = new Print($3,true,@1.first_line,@1.first_column)}
 ;
 // Bloque de instrucciones
 bloque
@@ -169,15 +198,11 @@ bloque
 ;
 // Sentencia de control
 fn_if
-        : IF PARIZQ expresion PARDER bloque     { $$ = new FN_IF($3,$5,null,0,0);}
-        | IF PARIZQ expresion PARDER bloque ELSE bloque     { $$ = new FN_IF($3,$5,$7,0,0);}
-        | IF PARIZQ expresion PARDER bloque ELSE fn_if     { $$ = new FN_IF($3,$5,$7,0,0);}
+        : IF PARIZQ expresion PARDER bloque     { $$ = new FN_IF($3,$5,null,@1.first_line,@1.first_column);}
+        | IF PARIZQ expresion PARDER bloque ELSE bloque     { $$ = new FN_IF($3,$5,$7,@1.first_line,@1.first_column);}
+        | IF PARIZQ expresion PARDER bloque ELSE fn_if     { $$ = new FN_IF($3,$5,$7,@1.first_line,@1.first_column);}
 ;
 
-decla_var
-        : tipo lista_id ASIGNACION expresion PYC 
-        | tipo lista_id PYC 
-;
 
 tipo
         : NUMBER { $$ = TipoDato.NUMBER;}
@@ -185,9 +210,4 @@ tipo
         | STRING { $$ = TipoDato.STRING;}
         | BOOLEAN { $$ = TipoDato.BOOLEANO;}
         | CHAR { $$ = TipoDato.CHAR;}
-;
-
-lista_id
-        : lista_id COMA ID { $1.push($3); $$ = $1;}
-        | ID { $$ = [$1];}
 ;

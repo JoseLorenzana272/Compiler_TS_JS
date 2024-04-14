@@ -12,20 +12,19 @@ export class Environment{
         this.functions = new Map()
     }
 
-    public saveVar(id:string, value:any, type:TipoDato) : void{
+    public saveVar(id:string, value:any, type:TipoDato, line:number, column:number) : void{
         let env: Environment | null = this;
         if(env.variables.has(id)){
-            env.variables.set(id,new Symbol(id,type,value));
-            return;
+            throw new Error(`Variable ${id} ya declarada`);
         }
-        this.variables.set(id,new Symbol(id,type,value));
+        this.variables.set(id,new Symbol(id,type,value, line, column));
     }
 
-    public editVar(id:string, value:any, type:TipoDato) : void{
+    public editVar(id:string, value:any, type:TipoDato, line:number, column:number) : void{
         let env: Environment | null = this;
         while(env != null){
             if(env.variables.has(id)){
-                env.variables.set(id,new Symbol(id,type,value));
+                env.variables.set(id,new Symbol(id,type,value, line, column));
                 return;
             }
             env = env.previous;
