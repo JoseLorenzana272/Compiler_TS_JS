@@ -17,6 +17,10 @@
         const {VarDecla} = require("../js/instruccion/VarDecla");
         const {idValue} = require("../js/Expresion/idValue");
         const {Incremento} = require("../js/instruccion/Incremento");
+        const {FN_DO_WHILE} = require("../js/instruccion/Control/DoWhile");
+        const {FN_SWITCH} = require("../js/instruccion/Control/Switch");
+        const {TypeOf} = require("../js/Expresion/TypeOf");
+
 %}
 
 %lex // Inicia parte léxica
@@ -82,9 +86,17 @@
 "toupper"               return 'TOUPPER';
 "round"                 return 'ROUND';
 "std::toString"         return 'TOSTRING';
+"typeof"                return 'TYPEOF';
 // Incremento
 "++"                    return 'DMAS';
 "--"                    return 'DMENOS';
+// do while
+"do"                    return 'DO';
+"while"                 return 'WHILE';
+// switch
+"switch"                return 'SWITCH';
+"case"                  return 'CASE';
+"default"               return 'DEFAULT';
 // Cadenas             "asdfasdfasf"
 \"[^\"]*\"				{ yytext = yytext.substr(1,yyleng-2); return 'CADENA'; }
 ([a-zA-z])[a-zA-Z0-9_]* return 'ID';
@@ -128,7 +140,13 @@ instruccion: EXEC expresion PYC         { $$ =  $2;}
             | dec_var PYC                { $$ = $1;}
             | set_var PYC                { $$ = $1;}
             | incremento PYC             { $$ = $1;}
+            | fn_dowhile PYC            { $$ = $1;}
+            | fn_switch PYC            { $$ = $1;}
 ;
+
+fn_dowhile
+        : DO bloque WHILE PARIZQ expresion PARDER { $$ = new FN_DO_WHILE($5,$2,@1.first_line,@1.first_column);}
+; 
 
 dec_var: tipo lista_id var_assig {$$ = new VarDecla($2,$1,$3, @1.first_line,@1.first_column);}
 ;
@@ -166,6 +184,7 @@ expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica(new Primitivo(@1.f
         | ROUND PARIZQ expresion PARDER { $$ = new Round($3,@1.first_line,@1.first_column); }
         | TOSTRING PARIZQ expresion PARDER { $$ = new ToString($3,@1.first_line,@1.first_column); }
         | ID                            { $$ = new idValue($1, @1.first_line,@1.first_column); }
+        | TYPEOF PARIZQ expresion PARDER { $$ = new TypeOf($3,@1.first_line,@1.first_column); }
         
 ;
 
@@ -203,6 +222,23 @@ fn_if
         | IF PARIZQ expresion PARDER bloque ELSE fn_if     { $$ = new FN_IF($3,$5,$7,@1.first_line,@1.first_column);}
 ;
 
+fn_switch
+        : SWITCH PARIZQ expresion PARDER LLAVEIZQ cases LLAVEDER { $$ = new FN_SWITCH($3,$6,@1.first_line,@1.first_column);}
+        | SWITCH PARIZQ expresion PARDER LLAVEIZQ cases default_div LLAVEDER { $$ = new FN_SWITCH($3,$6,$7,@1.first_line,@1.first_column);}
+;
+
+cases
+        : cases case_div { $1.push($2); $$ = $1;}
+        | case_div { $$ = [$1];}
+;
+
+case_div
+        : CASE expresion DOSPUNTOS instrucciones { $$ = {case: $2, instrucciones: $4};}
+;
+
+default_div
+        : DEFAULT DOSPUNTOS instrucciones { $$ = {case: "default", instrucciones: $3};}
+;
 
 tipo
         : NUMBER { $$ = TipoDato.NUMBER;}
