@@ -1,42 +1,40 @@
 import { Expresion } from "../../Expresion/Expresion";
-import { TipoDato } from "../../Expresion/Resultado";
 import { Bloque } from "../Bloque";
 import { Instruccion } from "../Instruccion";
 import { Environment } from "../../Symbol/Environment";
+import { FN_CASE } from "./case";
 
 export class FN_SWITCH extends Instruccion{
-    condicion: Expresion
-    casos: Bloque[]
-    casoDefault: Bloque
+    private condicion: Expresion
+    private casos: FN_CASE[]
 
-    constructor(condicion:Expresion,casos:Bloque[],casoDefault:Bloque,linea:number,columna:number){
+    constructor(condicion:Expresion,casos:FN_CASE[],casoDefault:Bloque,linea:number,columna:number){
         super(linea,columna)
         this.condicion = condicion
         this.casos = casos
-        this.casoDefault  = casoDefault
     }
 
     public interpretar(environment_name: Environment, consola: string[]): any {
         const condicion = this.condicion.interpretar(environment_name)
-        let bandera = false
-        console.log("condicion", condicion)
-        console.log("casos", this.casos)
+        let continuar_default = true
         for (let i = 0; i < this.casos.length; i++) {
-            const caso = this.casos[i]
-            console.log("casooooooo", caso.interpretar)
-            if (condicion.valor == caso){
-                bandera = true
-                caso.interpretar(environment_name, consola)
-                break
+            const caso = this.casos[i];
+            const condicion_case = caso.getCondicion(environment_name).valor
+            if (condicion_case == condicion.valor) {
+                let escape = caso.interpretar(environment_name, consola)
+                if (escape == "break") {
+                    continuar_default = false
+                    break
+                }
             }
         }
-        if (!bandera && this.casoDefault != null){
-            console.log("default", this.casoDefault.instrucciones)
-            this.casoDefault.instrucciones.forEach(instruccion => {
-                instruccion.interpretar(environment_name, consola)
+        if (continuar_default){
+            this.casos.forEach(caso => {
+                if (caso.getCondicion(environment_name).valor == null) {
+                    caso.interpretar(environment_name, consola)
+                }
             });
         }
-        return null
     }
 
 }

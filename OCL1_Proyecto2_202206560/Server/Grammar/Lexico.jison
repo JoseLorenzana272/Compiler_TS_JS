@@ -20,6 +20,8 @@
         const {FN_DO_WHILE} = require("../js/instruccion/Control/DoWhile");
         const {FN_SWITCH} = require("../js/instruccion/Control/Switch");
         const {TypeOf} = require("../js/Expresion/TypeOf");
+        const {FN_CASE} = require("../js/instruccion/Control/Case");
+        const {Break} = require("../js/instruccion/Break");
 
 %}
 
@@ -97,6 +99,7 @@
 "switch"                return 'SWITCH';
 "case"                  return 'CASE';
 "default"               return 'DEFAULT';
+"break"                 return 'BREAK';
 // Cadenas             "asdfasdfasf"
 \"[^\"]*\"				{ yytext = yytext.substr(1,yyleng-2); return 'CADENA'; }
 ([a-zA-z])[a-zA-Z0-9_]* return 'ID';
@@ -142,6 +145,10 @@ instruccion: EXEC expresion PYC         { $$ =  $2;}
             | incremento PYC             { $$ = $1;}
             | fn_dowhile PYC            { $$ = $1;}
             | fn_switch PYC            { $$ = $1;}
+                | break_instruccion { $$ = $1; }
+;
+
+break_instruccion: BREAK PYC { $$ = new Break(@1.first_line,@1.first_column); }
 ;
 
 fn_dowhile
@@ -224,7 +231,6 @@ fn_if
 
 fn_switch
         : SWITCH PARIZQ expresion PARDER LLAVEIZQ cases LLAVEDER { $$ = new FN_SWITCH($3,$6,@1.first_line,@1.first_column);}
-        | SWITCH PARIZQ expresion PARDER LLAVEIZQ cases default_div LLAVEDER { $$ = new FN_SWITCH($3,$6,$7,@1.first_line,@1.first_column);}
 ;
 
 cases
@@ -233,12 +239,10 @@ cases
 ;
 
 case_div
-        : CASE expresion DOSPUNTOS instrucciones { $$ = {case: $2, instrucciones: $4};}
+        : CASE expresion DOSPUNTOS instrucciones { $$ = new FN_CASE($2, $4, @1.first_line,@1.first_column);}
+        | DEFAULT DOSPUNTOS instrucciones { $$ = new FN_CASE(null, $3, @1.first_line,@1.first_column);}
 ;
 
-default_div
-        : DEFAULT DOSPUNTOS instrucciones { $$ = {case: "default", instrucciones: $3};}
-;
 
 tipo
         : NUMBER { $$ = TipoDato.NUMBER;}
