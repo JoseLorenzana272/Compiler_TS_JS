@@ -15,7 +15,7 @@ export class Environment{
     public saveVar(id:string, value:any, type:TipoDato, line:number, column:number) : void{
         let env: Environment | null = this;
         if(env.variables.has(id)){
-            throw new Error(`Variable ${id} ya declarada`);
+            this.editVar(id,value,type,line,column);
         }
         this.variables.set(id,new Symbol(id,type,value, line, column));
     }

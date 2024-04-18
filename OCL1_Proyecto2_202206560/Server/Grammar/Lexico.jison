@@ -22,18 +22,24 @@
         const {TypeOf} = require("../js/Expresion/TypeOf");
         const {FN_CASE} = require("../js/instruccion/Control/Case");
         const {Break} = require("../js/instruccion/Break");
+        const {SetVar} = require("../js/instruccion/SetVar");
+        const {FN_FOR} = require("../js/instruccion/Control/For");
+        const {FN_WHILE} = require("../js/instruccion/Control/While");
+        const {Continue} = require("../js/instruccion/Continue");
 
 %}
 
 %lex // Inicia parte léxica
 
 %options case-insensitive
+%x character
 
 %%
 
 \s+                                 //ignora espacios
 //Palabras reservadas
-// Comentarios son con //
+"//".*		{   }
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {   }
 
 [0-9]+("."[0-9]+)\b     return 'DOUBLE';
 [0-9]+\b                return 'NUMBER';
@@ -100,9 +106,17 @@
 "case"                  return 'CASE';
 "default"               return 'DEFAULT';
 "break"                 return 'BREAK';
+"continue"             return 'CONTINUE';
+// for
+"for"                   return 'FOR';
 // Cadenas             "asdfasdfasf"
 \"[^\"]*\"				{ yytext = yytext.substr(1,yyleng-2); return 'CADENA'; }
+[']                            { this.begin("character"); }
+<character>\\x[0-9a-fA-F]{2}   { return 'CARACTER';}
+<character>[^\\\']             { return 'CARACTER'; }
+<character>\'                  { this.popState(); }
 ([a-zA-z])[a-zA-Z0-9_]* return 'ID';
+
 
 <<EOF>>                 return 'EOF';
 
@@ -144,11 +158,17 @@ instruccion: EXEC expresion PYC         { $$ =  $2;}
             | set_var PYC                { $$ = $1;}
             | incremento PYC             { $$ = $1;}
             | fn_dowhile PYC            { $$ = $1;}
-            | fn_switch PYC            { $$ = $1;}
+            | fn_switch           { $$ = $1;}
+                | fn_for         { $$ = $1;}
                 | break_instruccion { $$ = $1; }
+                | fn_while { $$ = $1; }
+                | continue_instruccion { $$ = $1; }
 ;
 
 break_instruccion: BREAK PYC { $$ = new Break(@1.first_line,@1.first_column); }
+;
+
+continue_instruccion: CONTINUE PYC { $$ = new Continue(@1.first_line,@1.first_column); }
 ;
 
 fn_dowhile
@@ -192,6 +212,7 @@ expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica(new Primitivo(@1.f
         | TOSTRING PARIZQ expresion PARDER { $$ = new ToString($3,@1.first_line,@1.first_column); }
         | ID                            { $$ = new idValue($1, @1.first_line,@1.first_column); }
         | TYPEOF PARIZQ expresion PARDER { $$ = new TypeOf($3,@1.first_line,@1.first_column); }
+        | CARACTER { $$ = new Primitivo($1,TipoDato.CHAR,@1.first_line,@1.first_column); }
         
 ;
 
@@ -243,6 +264,20 @@ case_div
         | DEFAULT DOSPUNTOS instrucciones { $$ = new FN_CASE(null, $3, @1.first_line,@1.first_column);}
 ;
 
+fn_for: FOR PARIZQ dec_for PYC expresion PYC actualizacion_for PARDER bloque { $$ = new FN_FOR($3,$5,$7,$9,@1.first_line,@1.first_column);}
+;
+
+dec_for: tipo ID ASIGNACION expresion { $$ = new VarDecla([$2],$1,$4,@1.first_line,@1.first_column);}
+        | ID ASIGNACION expresion { $$ = new SetVar($1,$3,@1.first_line,@1.first_column);}
+;
+
+actualizacion_for: ID MAS MAS { $$ = new Incremento($1,true,@1.first_line,@1.first_column);}
+        | ID RES RES { $$ = new Incremento($1,false,@1.first_line,@1.first_column);}
+        | ID ASIGNACION expresion { $$ = new SetVar($1,$3,@1.first_line,@1.first_column);}
+;
+
+fn_while: WHILE PARIZQ expresion PARDER bloque { $$ = new FN_WHILE($3,$5,@1.first_line,@1.first_column);}
+;
 
 tipo
         : NUMBER { $$ = TipoDato.NUMBER;}

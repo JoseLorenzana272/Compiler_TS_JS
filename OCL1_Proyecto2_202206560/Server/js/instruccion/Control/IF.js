@@ -12,17 +12,24 @@ class FN_IF extends Instruccion_1.Instruccion {
     }
     interpretar(environment_name, consola) {
         const condicion = this.condicion.interpretar(environment_name);
+        var escape_if;
         if (condicion.tipo != Resultado_1.TipoDato.BOOLEANO)
             throw Error("La condición no es booleana");
         if (condicion.valor) {
-            this.bloqueIf.interpretar(environment_name, consola);
+            escape_if = this.bloqueIf.interpretar(environment_name, consola);
         }
         else {
-            console.log("else");
-            console.log({ else: this.bloqueElse });
-            this.bloqueElse.interpretar(environment_name, consola);
+            if (this.bloqueElse != null) {
+                console.log("else");
+                console.log({ else: this.bloqueElse });
+                escape_if = this.bloqueElse.interpretar(environment_name, consola);
+            }
         }
-        return null;
+        if (escape_if != null)
+            return escape_if;
+        else {
+            return null;
+        }
     }
 }
 exports.FN_IF = FN_IF;

@@ -24,9 +24,9 @@ export class Relacional extends Expresion{
             throw Error("Tipo de dato no se puede comparar")
         }
         if(
-            (resultado1.tipo==TipoDato.NUMBER || resultado1.tipo==TipoDato.DOUBLE || resultado1.tipo==TipoDato.CHAR
+            (resultado1.tipo==TipoDato.NUMBER || resultado1.tipo==TipoDato.DOUBLE || resultado1.tipo==TipoDato.CHAR || resultado1.tipo==TipoDato.STRING
             &&
-            resultado2.tipo==TipoDato.NUMBER || resultado2.tipo==TipoDato.DOUBLE || resultado2.tipo==TipoDato.CHAR
+            resultado2.tipo==TipoDato.NUMBER || resultado2.tipo==TipoDato.DOUBLE || resultado2.tipo==TipoDato.CHAR || resultado2.tipo==TipoDato.STRING
             ) || (resultado1.tipo==TipoDato.BOOLEANO && resultado2.tipo==TipoDato.BOOLEANO)
         ){
             switch (this.Operacion){

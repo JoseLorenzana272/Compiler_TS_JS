@@ -11,9 +11,17 @@ export class Bloque extends Instruccion{
     }
 
     public interpretar(environment_name: Environment, consola: string[]): null {
-        this.instrucciones.forEach(instruccion => {
-            instruccion.interpretar(environment_name, consola)
-       });
+        var inst
+        for(let instruccion of this.instrucciones){
+            inst = instruccion.interpretar(environment_name,consola)
+            if(inst == "break" || inst == "continue" || inst == "return"){
+                break
+            }
+
+        }
+       if (inst != null) return inst
+       else{
        return null;
+       }
     }
 }

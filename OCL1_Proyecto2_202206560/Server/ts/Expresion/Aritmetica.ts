@@ -114,7 +114,7 @@ export class Aritmetica extends Expresion{
 
 function convertirTipo(temp: Resultado): void {
     if(temp.tipo == TipoDato.BOOLEANO) {
-        if(temp.valor == "true") {
+        if(temp.valor == true) {
             temp.valor = 1;
         } else {
             temp.valor = 0;

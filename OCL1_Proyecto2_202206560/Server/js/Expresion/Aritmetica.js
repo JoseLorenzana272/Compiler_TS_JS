@@ -108,7 +108,7 @@ class Aritmetica extends Expresion_1.Expresion {
 exports.Aritmetica = Aritmetica;
 function convertirTipo(temp) {
     if (temp.tipo == Resultado_1.TipoDato.BOOLEANO) {
-        if (temp.valor == "true") {
+        if (temp.valor == true) {
             temp.valor = 1;
         }
         else {

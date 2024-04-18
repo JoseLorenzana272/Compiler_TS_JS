@@ -19,9 +19,9 @@ class Relacional extends Expresion_1.Expresion {
         if (resultado1.tipo == Resultado_1.TipoDato.NULO || resultado2.tipo == Resultado_1.TipoDato.NULO) {
             throw Error("Tipo de dato no se puede comparar");
         }
-        if ((resultado1.tipo == Resultado_1.TipoDato.NUMBER || resultado1.tipo == Resultado_1.TipoDato.DOUBLE || resultado1.tipo == Resultado_1.TipoDato.CHAR
+        if ((resultado1.tipo == Resultado_1.TipoDato.NUMBER || resultado1.tipo == Resultado_1.TipoDato.DOUBLE || resultado1.tipo == Resultado_1.TipoDato.CHAR || resultado1.tipo == Resultado_1.TipoDato.STRING
             &&
-                resultado2.tipo == Resultado_1.TipoDato.NUMBER || resultado2.tipo == Resultado_1.TipoDato.DOUBLE || resultado2.tipo == Resultado_1.TipoDato.CHAR) || (resultado1.tipo == Resultado_1.TipoDato.BOOLEANO && resultado2.tipo == Resultado_1.TipoDato.BOOLEANO)) {
+                resultado2.tipo == Resultado_1.TipoDato.NUMBER || resultado2.tipo == Resultado_1.TipoDato.DOUBLE || resultado2.tipo == Resultado_1.TipoDato.CHAR || resultado2.tipo == Resultado_1.TipoDato.STRING) || (resultado1.tipo == Resultado_1.TipoDato.BOOLEANO && resultado2.tipo == Resultado_1.TipoDato.BOOLEANO)) {
             switch (this.Operacion) {
                 case Resultado_1.OpRelacional.IGUAL:
                     return { tipo: Resultado_1.TipoDato.BOOLEANO, valor: resultado1.valor == resultado2.valor };

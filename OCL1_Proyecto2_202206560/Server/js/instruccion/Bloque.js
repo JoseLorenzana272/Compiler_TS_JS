@@ -8,10 +8,18 @@ class Bloque extends Instruccion_1.Instruccion {
         this.instrucciones = instrucciones;
     }
     interpretar(environment_name, consola) {
-        this.instrucciones.forEach(instruccion => {
-            instruccion.interpretar(environment_name, consola);
-        });
-        return null;
+        var inst;
+        for (let instruccion of this.instrucciones) {
+            inst = instruccion.interpretar(environment_name, consola);
+            if (inst == "break" || inst == "continue" || inst == "return") {
+                break;
+            }
+        }
+        if (inst != null)
+            return inst;
+        else {
+            return null;
+        }
     }
 }
 exports.Bloque = Bloque;

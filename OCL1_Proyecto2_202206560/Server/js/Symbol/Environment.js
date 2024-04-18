@@ -11,7 +11,7 @@ class Environment {
     saveVar(id, value, type, line, column) {
         let env = this;
         if (env.variables.has(id)) {
-            throw new Error(`Variable ${id} ya declarada`);
+            this.editVar(id, value, type, line, column);
         }
         this.variables.set(id, new Symbol_1.Symbol(id, type, value, line, column));
     }
