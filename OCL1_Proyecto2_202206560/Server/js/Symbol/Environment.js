@@ -36,5 +36,26 @@ class Environment {
         }
         return null;
     }
+    // Para funciones
+    getFunction(id) {
+        let env = this;
+        while (env != null) {
+            if (env.functions.has(id)) {
+                return env.functions.get(id);
+            }
+            env = env.previous;
+        }
+        return undefined;
+    }
+    saveFunction(id, func) {
+        this.functions.set(id, func);
+    }
+    getGlobal() {
+        let env = this;
+        while ((env === null || env === void 0 ? void 0 : env.previous) != null) {
+            env = env.previous;
+        }
+        return env;
+    }
 }
 exports.Environment = Environment;

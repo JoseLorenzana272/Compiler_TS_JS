@@ -45,6 +45,7 @@ export class VarDecla extends Instruccion {
         }
         if(this.valor != null){
             const result = this.valor.interpretar(environment_name);
+            console.log('este es el resultado: ', result, 'este es el tipo: ', tipo);
             if(result.tipo != tipo && result.tipo){
                 throw new Error("El tipo de dato no coincide con el valor asignado");
             }

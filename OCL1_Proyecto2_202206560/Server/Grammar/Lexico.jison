@@ -26,6 +26,10 @@
         const {FN_FOR} = require("../js/instruccion/Control/For");
         const {FN_WHILE} = require("../js/instruccion/Control/While");
         const {Continue} = require("../js/instruccion/Continue");
+        const {Return} = require("../js/instruccion/Return");
+        const {Function} = require("../js/instruccion/Function");
+        const {CallVoid} = require("../js/instruccion/CallVoid");
+        const {CallReturn} = require("../js/Expresion/CallReturn");
 
 %}
 
@@ -39,11 +43,11 @@
 \s+                                 //ignora espacios
 //Palabras reservadas
 "//".*		{   }
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {   }
+//[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {   }
 
 [0-9]+("."[0-9]+)\b     return 'DOUBLE';
 [0-9]+\b                return 'NUMBER';
-
+"void"                 return 'VOID';
 "EXEC"                  return 'EXEC';
 "cout"                 return 'COUT';
 "endl"                 return 'ENDL';
@@ -107,6 +111,7 @@
 "default"               return 'DEFAULT';
 "break"                 return 'BREAK';
 "continue"             return 'CONTINUE';
+"return"                return 'RETURN';
 // for
 "for"                   return 'FOR';
 // Cadenas             "asdfasdfasf"
@@ -163,12 +168,18 @@ instruccion: EXEC expresion PYC         { $$ =  $2;}
                 | break_instruccion { $$ = $1; }
                 | fn_while { $$ = $1; }
                 | continue_instruccion { $$ = $1; }
+                | return_instruccion { $$ = $1; }
+                | funcion { $$ = $1; }
+                | call_funcion { $$ = $1; }
 ;
 
 break_instruccion: BREAK PYC { $$ = new Break(@1.first_line,@1.first_column); }
 ;
 
 continue_instruccion: CONTINUE PYC { $$ = new Continue(@1.first_line,@1.first_column); }
+;
+
+return_instruccion: RETURN expresion PYC { $$ = new Return($2,@1.first_line,@1.first_column); }
 ;
 
 fn_dowhile
@@ -213,6 +224,8 @@ expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica(new Primitivo(@1.f
         | ID                            { $$ = new idValue($1, @1.first_line,@1.first_column); }
         | TYPEOF PARIZQ expresion PARDER { $$ = new TypeOf($3,@1.first_line,@1.first_column); }
         | CARACTER { $$ = new Primitivo($1,TipoDato.CHAR,@1.first_line,@1.first_column); }
+        | ID PARIZQ list_expresion PARDER { $$ = new CallReturn($1,$3,@1.first_line,@1.first_column); }
+        | ID PARIZQ PARDER { $$ = new CallReturn($1,null,@1.first_line,@1.first_column); }
         
 ;
 
@@ -279,10 +292,30 @@ actualizacion_for: ID MAS MAS { $$ = new Incremento($1,true,@1.first_line,@1.fir
 fn_while: WHILE PARIZQ expresion PARDER bloque { $$ = new FN_WHILE($3,$5,@1.first_line,@1.first_column);}
 ;
 
+funcion : tipo ID PARIZQ parametros PARDER bloque { $$ = new Function($2, $6, $4, @1.first_line,@1.first_column);}
+        | tipo ID PARIZQ PARDER bloque { $$ = new Function($2, $5, [], @1.first_line,@1.first_column);}
+;
+
+parametros: parametros COMA parametro { $1.push($3); $$ = $1;}
+        | parametro { $$ = [$1];}
+;
+
+parametro: tipo ID { $$ = $2; }
+;
+
+call_funcion: ID PARIZQ list_expresion PARDER PYC { $$ = new CallVoid($1,$3,@1.first_line,@1.first_column); }
+        | ID PARIZQ PARDER PYC { $$ = new CallVoid($1,null,@1.first_line,@1.first_column); }
+;
+
+list_expresion: list_expresion COMA expresion { $1.push($3); $$ = $1;}
+        | expresion { $$ = [$1];}
+;
+
 tipo
         : NUMBER { $$ = TipoDato.NUMBER;}
         | DOUBLE { $$ = TipoDato.DOUBLE;}
         | STRING { $$ = TipoDato.STRING;}
         | BOOLEAN { $$ = TipoDato.BOOLEANO;}
         | CHAR { $$ = TipoDato.CHAR;}
+        | VOID { $$ = $1}
 ;

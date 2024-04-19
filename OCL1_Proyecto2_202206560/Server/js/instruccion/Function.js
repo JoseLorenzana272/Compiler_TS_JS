@@ -10,8 +10,7 @@ class Function extends Instruccion_1.Instruccion {
         this.parameters = parameters;
     }
     interpretar(environment_name, consola) {
-        //environment_name.guardarFuncion(this.id, this)
-        return null;
+        environment_name.saveFunction(this.id, this);
     }
 }
 exports.Function = Function;

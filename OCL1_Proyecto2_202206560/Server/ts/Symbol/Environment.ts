@@ -43,5 +43,29 @@ export class Environment{
         return null;
         
     }
+
+    // Para funciones
+    public getFunction(id: string): Function | undefined{
+        let env: Environment | null = this;
+        while(env != null){
+            if(env.functions.has(id)){
+                return env.functions.get(id);
+            }
+            env = env.previous;
+        }
+        return undefined;
+    }
+
+    public saveFunction(id: string, func: Function){
+        this.functions.set(id, func);
+    }
+
+    public getGlobal(): Environment{
+        let env: Environment = this;
+        while(env?.previous != null){
+            env = env.previous;
+        }
+        return env;
+    }
 }
 
