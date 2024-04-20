@@ -23,6 +23,19 @@ export class Aritmetica extends Expresion{
         // Lógica del intérprete
         // Comparamos el tipo de operación
         switch(this.Operacion){
+            case OpAritmetica.UMINUS:
+                dominantType = UMINUS[resultadoIzq.tipo]
+                switch(dominantType){
+                    case TipoDato.NUMBER:
+                        convertirTipo(resultadoIzq);
+                        return {valor:-resultadoIzq.valor,tipo:dominantType}
+                    case TipoDato.DOUBLE:
+                        convertirTipo(resultadoIzq);
+                        return {valor:-resultadoIzq.valor,tipo:dominantType}
+                    default:
+                        throw Error(`Error: No se puede negar ${TipoDato[resultadoIzq.tipo]}`)
+                }
+
             case OpAritmetica.SUMA:
                 dominantType = SUMAS[resultadoIzq.tipo][resultadoDer.tipo]
                 switch(dominantType){
@@ -171,4 +184,12 @@ const POTENCIA = [
     [TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ],
     [TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ],
     [TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ,TipoDato.NULO ],
+]
+
+const UMINUS = [
+    TipoDato.NUMBER,
+    TipoDato.DOUBLE,
+    TipoDato.NULO,
+    TipoDato.NULO,
+    TipoDato.NULO,
 ]

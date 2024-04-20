@@ -18,6 +18,18 @@ class Aritmetica extends Expresion_1.Expresion {
         // Lógica del intérprete
         // Comparamos el tipo de operación
         switch (this.Operacion) {
+            case Resultado_1.OpAritmetica.UMINUS:
+                dominantType = UMINUS[resultadoIzq.tipo];
+                switch (dominantType) {
+                    case Resultado_1.TipoDato.NUMBER:
+                        convertirTipo(resultadoIzq);
+                        return { valor: -resultadoIzq.valor, tipo: dominantType };
+                    case Resultado_1.TipoDato.DOUBLE:
+                        convertirTipo(resultadoIzq);
+                        return { valor: -resultadoIzq.valor, tipo: dominantType };
+                    default:
+                        throw Error(`Error: No se puede negar ${Resultado_1.TipoDato[resultadoIzq.tipo]}`);
+                }
             case Resultado_1.OpAritmetica.SUMA:
                 dominantType = SUMAS[resultadoIzq.tipo][resultadoDer.tipo];
                 switch (dominantType) {
@@ -160,4 +172,11 @@ const POTENCIA = [
     [Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO],
     [Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO],
     [Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO, Resultado_1.TipoDato.NULO],
+];
+const UMINUS = [
+    Resultado_1.TipoDato.NUMBER,
+    Resultado_1.TipoDato.DOUBLE,
+    Resultado_1.TipoDato.NULO,
+    Resultado_1.TipoDato.NULO,
+    Resultado_1.TipoDato.NULO,
 ];

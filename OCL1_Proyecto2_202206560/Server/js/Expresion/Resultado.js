@@ -18,6 +18,7 @@ var OpAritmetica;
     OpAritmetica[OpAritmetica["DIVISION"] = 3] = "DIVISION";
     OpAritmetica[OpAritmetica["MODULO"] = 4] = "MODULO";
     OpAritmetica[OpAritmetica["POTENCIA"] = 5] = "POTENCIA";
+    OpAritmetica[OpAritmetica["UMINUS"] = 6] = "UMINUS";
 })(OpAritmetica || (exports.OpAritmetica = OpAritmetica = {}));
 var OpRelacional;
 (function (OpRelacional) {

@@ -30,6 +30,7 @@
         const {Function} = require("../js/instruccion/Function");
         const {CallVoid} = require("../js/instruccion/CallVoid");
         const {CallReturn} = require("../js/Expresion/CallReturn");
+        //const {Casteo} = require("../js/Expresion/Casteo");
 
 %}
 
@@ -201,7 +202,7 @@ set_var: ID ASIGNACION expresion { $$ = new SetVar($1,$3,@1.first_line,@1.first_
 ;
 
 // Para sitetisar un dato, se utiliza $$
-expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica(new Primitivo(@1.first_line,@1.first_column,0),$2,OpAritmetica.RESTA,@1.first_line,@1.first_column);} 
+expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica($2,$2,OpAritmetica.UMINUS,@1.first_line,@1.first_column);} 
         | expresion MAS expresion      { $$ = new Aritmetica($1,$3,OpAritmetica.SUMA,@1.first_line,@1.first_column);}
         | expresion RES expresion       { $$ = new Aritmetica($1,$3,OpAritmetica.RESTA,@1.first_line,@1.first_column);}
         | expresion MUL expresion       { $$ =  new Aritmetica($1,$3,OpAritmetica.PRODUCTO,@1.first_line,@1.first_column);}
