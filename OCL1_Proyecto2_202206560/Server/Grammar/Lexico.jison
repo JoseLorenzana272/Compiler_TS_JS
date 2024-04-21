@@ -30,7 +30,7 @@
         const {Function} = require("../js/instruccion/Function");
         const {CallVoid} = require("../js/instruccion/CallVoid");
         const {CallReturn} = require("../js/Expresion/CallReturn");
-        //const {Casteo} = require("../js/Expresion/Casteo");
+        const {Casteo} = require("../js/Expresion/casteos");
 
 %}
 
@@ -46,8 +46,8 @@
 "//".*		{   }
 //[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {   }
 
-[0-9]+("."[0-9]+)\b     return 'DOUBLE';
-[0-9]+\b                return 'NUMBER';
+[0-9]+("."[0-9]+)\b     return 'DOUBLE_A';
+[0-9]+\b                return 'NUMBER_A';
 "void"                 return 'VOID';
 "EXEC"                  return 'EXEC';
 "cout"                 return 'COUT';
@@ -55,6 +55,7 @@
 "<<"                   return 'CONCATENAR';
 "true"                  return 'TRUE';
 "false"                 return 'FALSE';
+"new"                   return 'NEW';
 //Instrucciones de control
 "if"                    return 'IF';
 "else"                  return 'ELSE';
@@ -66,6 +67,8 @@
 // signos
 "("                     return 'PARIZQ';
 ")"                     return 'PARDER';
+"["                     return 'CORCHIZQ';
+"]"                     return 'CORCHDER';
 // Aritmeticas
 "+"                     return 'MAS';
 "-"                     return 'RES';
@@ -141,8 +144,9 @@
 %left 'MAS', 'RES'
 %left 'MUL','DIV'
 %left 'MOD', 'POW'
-
 %right 'UMINUS'
+%right cast
+
 
 // Inicio de gramática
 %start ini
@@ -188,6 +192,8 @@ fn_dowhile
 ; 
 
 dec_var: tipo lista_id var_assig {$$ = new VarDecla($2,$1,$3, @1.first_line,@1.first_column);}
+        | tipo ID CORCHIZQ CORCHDER ASIGNACION NEW tipo CORCHIZQ expresion CORCHDER { $$ = new DeclaraArreglo($2, $1, $9, @1.first_line, @1.first_column); }
+       | tipo ID CORCHIZQ CORCHDER ASIGNACION CORCHIZQ list_expresion CORCHDER { $$ = new DeclaraArregloLiteral($2, $1, $7, @1.first_line, @1.first_column); }
 ;
 
 lista_id: lista_id COMA ID { $1.push($3); $$ = $1;}
@@ -195,6 +201,8 @@ lista_id: lista_id COMA ID { $1.push($3); $$ = $1;}
 ;
 
 var_assig : ASIGNACION expresion { $$ = $2;}
+        | ASIGNACION NEW tipo CORCHIZQ expresion CORCHDER { $$ = new CrearArreglo($3, $5, @1.first_line, @1.first_column); }
+        | ASIGNACION CORCHIZQ list_expresion CORCHDER { $$ = new CrearArregloLiteral($3, @1.first_line, @1.first_column); }
         | { $$ = null;}
 ;
 
@@ -212,8 +220,8 @@ expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica($2,$2,OpAritmetica
         | expresion TERNARIO expresion DOSPUNTOS expresion { $$ = new Ternario($1,$3,$5,@1.first_line,@1.first_column);}
         | relacionales                   { $$ = $1;}
         | logicos                   { $$ = $1;}
-        | NUMBER                        { $$ = new Primitivo($1,TipoDato.NUMBER,@1.first_line,@1.first_column); }
-        | DOUBLE                        { $$ =  new Primitivo($1,TipoDato.DOUBLE,@1.first_line,@1.first_column); }
+        | NUMBER_A                        { $$ = new Primitivo($1,TipoDato.NUMBER,@1.first_line,@1.first_column); }
+        | DOUBLE_A                        { $$ =  new Primitivo($1,TipoDato.DOUBLE,@1.first_line,@1.first_column); }
         | TRUE                        { $$ =  new Primitivo($1,TipoDato.BOOLEANO,@1.first_line,@1.first_column); }
         | FALSE                        { $$ =  new Primitivo($1,TipoDato.BOOLEANO,@1.first_line,@1.first_column); }
         | CADENA                        { $$ =  new Primitivo($1,TipoDato.STRING,@1.first_line,@1.first_column); }
@@ -227,8 +235,10 @@ expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica($2,$2,OpAritmetica
         | CARACTER { $$ = new Primitivo($1,TipoDato.CHAR,@1.first_line,@1.first_column); }
         | ID PARIZQ list_expresion PARDER { $$ = new CallReturn($1,$3,@1.first_line,@1.first_column); }
         | ID PARIZQ PARDER { $$ = new CallReturn($1,null,@1.first_line,@1.first_column); }
+        | PARIZQ tipo PARDER expresion %prec cast { $$ = new Casteo($4,$2,@1.first_line,@1.first_column); }
         
 ;
+
 
 relacionales
         : expresion IGUAL expresion       { $$ =  new Relacional($1,$3,OpRelacional.IGUAL,@1.first_line,@1.first_column);}
