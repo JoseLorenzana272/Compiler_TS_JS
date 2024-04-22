@@ -29,3 +29,15 @@ export enum OpLogico{
 export enum OpTernario{
     TERNARIO
 }
+
+export function getArithmeticOpName(value: OpAritmetica): string {
+    return OpAritmetica[value];
+}
+
+export function getRelationalOpName(value: OpRelacional): string {
+    return OpRelacional[value];
+}
+
+export function getLogicalOpName(value: OpLogico): string {
+    return OpLogico[value];
+}

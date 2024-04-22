@@ -2,6 +2,7 @@ import { Expresion } from "../Expresion/Expresion";
 import { TipoDato } from "../Expresion/Resultado";
 import { Instruccion } from "./Instruccion";
 import { Environment } from "../Symbol/Environment";
+import { tConsole } from "./tConsole";
 
 export class Print extends Instruccion{
     private expresion;
@@ -17,11 +18,14 @@ export class Print extends Instruccion{
             res.valor == res.valor?"true":"false"
         }
         if (this.salto){
-        consola.push(res.valor+"\n")
+        //consola.push(res.valor+"\n")
+        tConsole.push(res.valor+"\n")
         }
         else{
-        consola.push(res.valor+"")
+        //consola.push(res.valor+"")
+        tConsole.push(res.valor+"")
         }
+        console.log(tConsole.length)
         return null
     }
 }

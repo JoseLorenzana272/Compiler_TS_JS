@@ -2,6 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AST = void 0;
 const Environment_1 = require("./Symbol/Environment");
+const varDecla_1 = require("./instruccion/varDecla");
+const Function_1 = require("./instruccion/Function");
+const execute_1 = require("./instruccion/execute");
+const tConsole_1 = require("./instruccion/tConsole");
 class AST {
     constructor(instrucciones) {
         this.instrucciones = instrucciones;
@@ -9,9 +13,21 @@ class AST {
         this.global = new Environment_1.Environment(null);
     }
     ejecutar() {
+        tConsole_1.tConsole.length = 0;
         this.instrucciones.forEach(instruccion => {
-            instruccion.interpretar(this.global, this.consola);
+            if (instruccion instanceof varDecla_1.VarDecla || instruccion instanceof Function_1.Function) {
+                instruccion.interpretar(this.global, this.consola);
+            }
         });
+        for (let instruccion of this.instrucciones) {
+            if (instruccion instanceof execute_1.execute) {
+                instruccion.interpretar(this.global, this.consola);
+                break;
+            }
+        }
+        console.log(tConsole_1.tConsole[0]);
+        console.log(tConsole_1.tConsole.length);
+        this.consola = tConsole_1.tConsole;
     }
     getConsola() {
         let exit = "";

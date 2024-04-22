@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Print = void 0;
 const Resultado_1 = require("../Expresion/Resultado");
 const Instruccion_1 = require("./Instruccion");
+const tConsole_1 = require("./tConsole");
 class Print extends Instruccion_1.Instruccion {
     constructor(expresion, salto, linea, columna) {
         super(linea, columna);
@@ -15,11 +16,14 @@ class Print extends Instruccion_1.Instruccion {
             res.valor == res.valor ? "true" : "false";
         }
         if (this.salto) {
-            consola.push(res.valor + "\n");
+            //consola.push(res.valor+"\n")
+            tConsole_1.tConsole.push(res.valor + "\n");
         }
         else {
-            consola.push(res.valor + "");
+            //consola.push(res.valor+"")
+            tConsole_1.tConsole.push(res.valor + "");
         }
+        console.log(tConsole_1.tConsole.length);
         return null;
     }
 }

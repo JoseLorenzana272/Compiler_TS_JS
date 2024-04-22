@@ -3,7 +3,7 @@ import { Environment } from '../Symbol/Environment';
 
 export class Function extends Instruccion{
 
-    constructor(private id:string, public statements:Instruccion, public parameters: Array<string>, linea:number, columna:number){
+    constructor(public id:string, public statements:Instruccion, public parameters: Array<string>, linea:number, columna:number){
         super(linea,columna)
     }
 

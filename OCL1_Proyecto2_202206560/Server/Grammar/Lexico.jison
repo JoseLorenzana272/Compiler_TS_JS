@@ -31,6 +31,7 @@
         const {CallVoid} = require("../js/instruccion/CallVoid");
         const {CallReturn} = require("../js/Expresion/CallReturn");
         const {Casteo} = require("../js/Expresion/casteos");
+        const {execute} = require("../js/instruccion/execute");
 
 %}
 
@@ -49,7 +50,7 @@
 [0-9]+("."[0-9]+)\b     return 'DOUBLE_A';
 [0-9]+\b                return 'NUMBER_A';
 "void"                 return 'VOID';
-"EXEC"                  return 'EXEC';
+"EXECUTE"                  return 'EXEC';
 "cout"                 return 'COUT';
 "endl"                 return 'ENDL';
 "<<"                   return 'CONCATENAR';
@@ -135,17 +136,17 @@
 /lex
 
 // precedencia
-
+%right cast
+%right 'TERNARIO'
 %right 'NOT'
 %left 'OR'
 %left 'AND'
-%nonassoc 'TERNARIO'
 %left 'IGUAL','DISTINTO','MENOR','MENORIGUAL','MAYOR','MAYORIGUAL'
 %left 'MAS', 'RES'
-%left 'MUL','DIV'
-%left 'MOD', 'POW'
+%left 'MUL','DIV', 'MOD'
+%nonassoc 'POW'
 %right 'UMINUS'
-%right cast
+
 
 
 // Inicio de gramática
@@ -161,8 +162,8 @@ instrucciones: instrucciones instruccion    {  $1.push($2); $$ = $1;}
             | instruccion                   { $$ =  [$1];}
 ;
 
-instruccion: EXEC expresion PYC         { $$ =  $2;}
-            | fn_print PYC               { $$ = $1;}
+instruccion: 
+            fn_print PYC               { $$ = $1;}
             | fn_if                     { $$ = $1;}
             | dec_var PYC                { $$ = $1;}
             | set_var PYC                { $$ = $1;}
@@ -176,6 +177,7 @@ instruccion: EXEC expresion PYC         { $$ =  $2;}
                 | return_instruccion { $$ = $1; }
                 | funcion { $$ = $1; }
                 | call_funcion { $$ = $1; }
+                | execute { $$ = $1; }
 ;
 
 break_instruccion: BREAK PYC { $$ = new Break(@1.first_line,@1.first_column); }
@@ -190,6 +192,9 @@ return_instruccion: RETURN expresion PYC { $$ = new Return($2,@1.first_line,@1.f
 fn_dowhile
         : DO bloque WHILE PARIZQ expresion PARDER { $$ = new FN_DO_WHILE($5,$2,@1.first_line,@1.first_column);}
 ; 
+
+execute: EXEC call_funcion { $$ = new execute($2, @1.first_line,@1.first_column); }
+;
 
 dec_var: tipo lista_id var_assig {$$ = new VarDecla($2,$1,$3, @1.first_line,@1.first_column);}
         | tipo ID CORCHIZQ CORCHDER ASIGNACION NEW tipo CORCHIZQ expresion CORCHDER { $$ = new DeclaraArreglo($2, $1, $9, @1.first_line, @1.first_column); }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OpTernario = exports.OpLogico = exports.OpRelacional = exports.OpAritmetica = exports.TipoDato = void 0;
+exports.getLogicalOpName = exports.getRelationalOpName = exports.getArithmeticOpName = exports.OpTernario = exports.OpLogico = exports.OpRelacional = exports.OpAritmetica = exports.TipoDato = void 0;
 var TipoDato;
 (function (TipoDato) {
     TipoDato[TipoDato["NUMBER"] = 0] = "NUMBER";
@@ -39,3 +39,15 @@ var OpTernario;
 (function (OpTernario) {
     OpTernario[OpTernario["TERNARIO"] = 0] = "TERNARIO";
 })(OpTernario || (exports.OpTernario = OpTernario = {}));
+function getArithmeticOpName(value) {
+    return OpAritmetica[value];
+}
+exports.getArithmeticOpName = getArithmeticOpName;
+function getRelationalOpName(value) {
+    return OpRelacional[value];
+}
+exports.getRelationalOpName = getRelationalOpName;
+function getLogicalOpName(value) {
+    return OpLogico[value];
+}
+exports.getLogicalOpName = getLogicalOpName;
