@@ -32,6 +32,7 @@
         const {CallReturn} = require("../js/Expresion/CallReturn");
         const {Casteo} = require("../js/Expresion/casteos");
         const {execute} = require("../js/instruccion/execute");
+        const {lenght} = require("../js/Expresion/lenght");
 
 %}
 
@@ -57,6 +58,7 @@
 "true"                  return 'TRUE';
 "false"                 return 'FALSE';
 "new"                   return 'NEW';
+"length"                return 'LENGTH';
 //Instrucciones de control
 "if"                    return 'IF';
 "else"                  return 'ELSE';
@@ -80,6 +82,7 @@
 ";"                     return 'PYC';
 ","                    return 'COMA';
 "?"                    return 'TERNARIO';
+"."                    return 'PUNTO';
 // Relacionales
 "=="                    return 'IGUAL';
 "!="                    return 'DISTINTO';
@@ -136,6 +139,7 @@
 /lex
 
 // precedencia
+%nonassoc 'PUNTO'
 %right cast
 %right 'TERNARIO'
 %right 'NOT'
@@ -241,6 +245,7 @@ expresion: RES expresion %prec UMINUS   { $$ = new Aritmetica($2,$2,OpAritmetica
         | ID PARIZQ list_expresion PARDER { $$ = new CallReturn($1,$3,@1.first_line,@1.first_column); }
         | ID PARIZQ PARDER { $$ = new CallReturn($1,null,@1.first_line,@1.first_column); }
         | PARIZQ tipo PARDER expresion %prec cast { $$ = new Casteo($4,$2,@1.first_line,@1.first_column); }
+        | expresion PUNTO LENGTH PARIZQ PARDER { $$ = new lenght($1,@1.first_line,@1.first_column); }
         
 ;
 
