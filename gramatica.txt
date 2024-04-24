@@ -1,0 +1,138 @@
+Archivo de Gramática BNF - José Daniel Lorenzana Medina
+
+<ini> ::= <instrucciones> EOF
+
+<instrucciones> ::= <instrucciones> <instruccion>
+                  | <instruccion>
+
+<instruccion> ::= <fn_print> PYC
+                | <fn_if>
+                | <dec_var> PYC
+                | <set_var> PYC
+                | <incremento> PYC
+                | <fn_dowhile> PYC
+                | <fn_switch>
+                | <fn_for>
+                | <break_instruccion>
+                | <fn_while>
+                | <continue_instruccion>
+                | <return_instruccion>
+                | <funcion>
+                | <call_funcion>
+                | <execute>
+
+<break_instruccion> ::= BREAK PYC
+
+<continue_instruccion> ::= CONTINUE PYC
+
+<return_instruccion> ::= RETURN <expresion> PYC
+
+<fn_dowhile> ::= DO <bloque> WHILE PARIZQ <expresion> PARDER
+
+<execute> ::= EXEC <call_funcion>
+
+<dec_var> ::= <tipo> <lista_id> <var_assig>
+             | <tipo> ID CORCHIZQ CORCHDER ASIGNACION NEW <tipo> CORCHIZQ <expresion> CORCHDER
+             | <tipo> ID CORCHIZQ CORCHDER ASIGNACION CORCHIZQ <list_expresion> CORCHDER
+
+<lista_id> ::= <lista_id> COMA ID
+              | ID
+
+<var_assig> ::= ASIGNACION <expresion>
+               | ASIGNACION NEW <tipo> CORCHIZQ <expresion> CORCHDER
+               | ASIGNACION CORCHIZQ <list_expresion> CORCHDER
+               |
+
+<set_var> ::= ID ASIGNACION <expresion>
+
+<expresion> ::= RES <expresion>
+               | <expresion> MAS <expresion>
+               | <expresion> RES <expresion>
+               | <expresion> MUL <expresion>
+               | <expresion> DIV <expresion>
+               | <expresion> MOD <expresion>
+               | POW PARIZQ <expresion> COMA <expresion> PARDER
+               | <expresion> TERNARIO <expresion> DOSPUNTOS <expresion>
+               | <relacionales>
+               | <logicos>
+               | NUMBER_A
+               | DOUBLE_A
+               | TRUE
+               | FALSE
+               | CADENA
+               | PARIZQ <expresion> PARDER
+               | TOLOWER PARIZQ <expresion> PARDER
+               | TOUPPER PARIZQ <expresion> PARDER
+               | ROUND PARIZQ <expresion> PARDER
+               | TOSTRING PARIZQ <expresion> PARDER
+               | ID
+               | TYPEOF PARIZQ <expresion> PARDER
+               | CARACTER
+               | ID PARIZQ <list_expresion> PARDER
+               | ID PARIZQ PARDER
+               | PARIZQ <tipo> PARDER <expresion>
+               | <expresion> PUNTO LENGTH PARIZQ PARDER
+
+<relacionales> ::= <expresion> IGUAL <expresion>
+                  | <expresion> DISTINTO <expresion>
+                  | <expresion> MENOR <expresion>
+                  | <expresion> MENORIGUAL <expresion>
+                  | <expresion> MAYOR <expresion>
+                  | <expresion> MAYORIGUAL <expresion>
+
+<logicos> ::= <expresion> AND <expresion>
+             | <expresion> OR <expresion>
+             | NOT <expresion>
+
+<incremento> ::= ID MAS MAS
+                | ID RES RES
+
+<fn_print> ::= COUT CONCATENAR <expresion>
+               | COUT CONCATENAR <expresion> CONCATENAR ENDL
+
+<bloque> ::= LLAVEIZQ <instrucciones> LLAVEDER
+             | LLAVEIZQ LLAVEDER
+
+<fn_if> ::= IF PARIZQ <expresion> PARDER <bloque>
+             | IF PARIZQ <expresion> PARDER <bloque> ELSE <bloque>
+             | IF PARIZQ <expresion> PARDER <bloque> ELSE <fn_if>
+
+<fn_switch> ::= SWITCH PARIZQ <expresion> PARDER LLAVEIZQ <cases> LLAVEDER
+
+<cases> ::= <cases> <case_div>
+            | <case_div>
+
+<case_div> ::= CASE <expresion> DOSPUNTOS <instrucciones>
+               | DEFAULT DOSPUNTOS <instrucciones>
+
+<fn_for> ::= FOR PARIZQ <dec_for> PYC <expresion> PYC <actualizacion_for> PARDER <bloque>
+
+<dec_for> ::= <tipo> ID ASIGNACION <expresion>
+              | ID ASIGNACION <expresion>
+
+<actualizacion_for> ::= ID MAS MAS
+                        | ID RES RES
+                        | ID ASIGNACION <expresion>
+
+<fn_while> ::= WHILE PARIZQ <expresion> PARDER <bloque>
+
+<funcion> ::= <tipo> ID PARIZQ <parametros> PARDER <bloque>
+              | <tipo> ID PARIZQ PARDER <bloque>
+
+<parametros> ::= <parametros> COMA <parametro>
+                  | <parametro>
+
+<parametro> ::= <tipo> ID
+
+<call_funcion> ::= ID PARIZQ <list_expresion> PARDER PYC
+                   | ID PARIZQ PARDER PYC
+
+<list_expresion> ::= <list_expresion> COMA <expresion>
+                      | <expresion>
+
+<tipo> ::= NUMBER
+            | DOUBLE
+            | STRING
+            | BOOLEAN
+            | CHAR
+            | VOID
