@@ -46,7 +46,7 @@
 \s+                                 //ignora espacios
 //Palabras reservadas
 "//".*		{   }
-//[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {   }
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {   }
 
 [0-9]+("."[0-9]+)\b     return 'DOUBLE_A';
 [0-9]+\b                return 'NUMBER_A';

@@ -46,7 +46,7 @@ abrirButton.addEventListener("click", function() {
   console.log("Haz clic en el botón 'Abrir'");
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = ".txt"; // Establecer el tipo de archivo permitido, por ejemplo, .txt
+  input.accept = ".sc"; // Establecer el tipo de archivo permitido, por ejemplo, .txt
   input.onchange = abrirArchivo; // Llama a la función abrirArchivo cuando se selecciona un archivo
   input.click();
 });
