@@ -45,4 +45,22 @@ export class AST{
         return exit
     }
 
+    public generateGraphvizDOT(): string {
+        let dot = `digraph AST {\n`;
+
+        // Add nodes for each instruction
+        this.instrucciones.forEach((instruccion, index) => {
+            dot += `  node${index} [label="${instruccion.constructor.name}"];\n`;
+        });
+
+        // Add edges between instructions
+        for (let i = 0; i < this.instrucciones.length - 1; i++) {
+            dot += `  node${i} -> node${i + 1};\n`;
+        }
+
+        dot += `}`;
+
+        return dot;
+    }
+
 }

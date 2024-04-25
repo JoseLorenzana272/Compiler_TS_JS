@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
 import { exec } from 'child_process';
 import * as path from 'path'; // Importa el módulo path para trabajar con rutas de archivos
+const fs = require('fs');
 
 const parser = require("../Grammar/Lexico.js");
+
 
 function interprete(contenido: string) {
     try {
         const ast = parser.parse(contenido);
+        
         ast.ejecutar();
+        var graph = ast.generateGraphvizDOT()
+
+        console.log(graph);
+        seeImage(graph);
         console.log("Análisis finalizado");
         return ast.getConsola();
     } catch (error) {
@@ -47,3 +54,35 @@ app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
     exec('start http://localhost:3000'); // Este comando abre la URL en el navegador predeterminado
 });
+
+function seeImage(texto: string): void {
+    const outputPath = path.join(__dirname, 'output.dot');
+    fs.writeFile(outputPath, texto, (err: NodeJS.ErrnoException | null) => {
+        if (err) {
+            console.error("Error al escribir el archivo:", err);
+        } else {
+            console.log("Archivo .dot generado con éxito.");
+            generarImagen();
+        }
+    });
+
+    function generarImagen(): void {
+        const inputPath = path.join(__dirname, 'output.dot');
+        const outputPath = path.join(__dirname, 'output.png');
+
+        const cmd: string = `dot -Tpng ${inputPath} -o ${outputPath} && start ${outputPath}`;
+
+
+        exec(cmd, (error: Error | null, stdout: string, stderr: string) => {
+            if (error) {
+                console.error(`Error al ejecutar el comando: ${error}`);
+                return;
+            }
+            if (stderr) {
+                console.error(`Error en stderr: ${stderr}`);
+                return;
+            }
+            console.log('Imagen generada y abierta con éxito.');
+        });
+    }
+}

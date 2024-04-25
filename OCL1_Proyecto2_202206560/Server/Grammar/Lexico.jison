@@ -139,7 +139,7 @@
 /lex
 
 // precedencia
-%nonassoc 'PUNTO'
+%left 'PUNTO'
 %right cast
 %right 'TERNARIO'
 %right 'NOT'
